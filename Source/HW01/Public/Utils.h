@@ -15,4 +15,13 @@ public:
 			FMath::FRandRange(Min.Z, Max.Z)
 		);
 	}
+	
+	static FRotator GetRandRotator(const FRotator& Min, const FRotator& Max)
+	{
+		return FRotator(
+			FMath::FRandRange(Min.Pitch, Max.Pitch),
+			FMath::FRandRange(Min.Yaw, Max.Yaw),
+			FMath::FRandRange(Min.Roll, Max.Roll)
+		);
+	}
 };

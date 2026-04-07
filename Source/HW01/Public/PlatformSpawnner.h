@@ -33,9 +33,16 @@ public:
 	UPROPERTY(EditAnywhere, Category="Location Limit")
 	FVector LocationLimit_Max;	
 	
+	UPROPERTY(EditAnywhere, Category="Rotation Limit")
+	FRotator RotationLimit_Min;	
+	
+	UPROPERTY(EditAnywhere, Category="Rotation Limit")
+	FRotator RotationLimit_Max;
+	
+	
 protected:
 	virtual void BeginPlay() override;
 	
 private:
-	void SpawnPlatform(const EPlatformType &Type, const FVector &Location);
+	void SpawnPlatform(const EPlatformType &Type, const FVector &Location, const FRotator & Rotation);
 };

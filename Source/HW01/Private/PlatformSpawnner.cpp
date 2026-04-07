@@ -13,13 +13,13 @@ void APlatformSpawnner::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	SpawnPlatform(EPlatformType::Move, FUtils::GetRandVector(LocationLimit_Min, LocationLimit_Max));
-	SpawnPlatform(EPlatformType::Rotate, FUtils::GetRandVector(LocationLimit_Min, LocationLimit_Max));
-	SpawnPlatform(EPlatformType::Phase, FUtils::GetRandVector(LocationLimit_Min, LocationLimit_Max));
+	SpawnPlatform(EPlatformType::Move, FUtils::GetRandVector(LocationLimit_Min, LocationLimit_Max), FUtils::GetRandRotator(RotationLimit_Min, RotationLimit_Max));
+	SpawnPlatform(EPlatformType::Rotate, FUtils::GetRandVector(LocationLimit_Min, LocationLimit_Max), FUtils::GetRandRotator(RotationLimit_Min, RotationLimit_Max));
+	SpawnPlatform(EPlatformType::Phase, FUtils::GetRandVector(LocationLimit_Min, LocationLimit_Max), FUtils::GetRandRotator(RotationLimit_Min, RotationLimit_Max));
 	
 }
 
-void APlatformSpawnner::SpawnPlatform(const EPlatformType &Type, const FVector &Location)
+void APlatformSpawnner::SpawnPlatform(const EPlatformType &Type, const FVector &Location, const FRotator &Rotation)
 {
 	UClass * Target = nullptr;
 	switch (Type)
@@ -39,5 +39,5 @@ void APlatformSpawnner::SpawnPlatform(const EPlatformType &Type, const FVector &
 	
 	if (Target == nullptr) return;
 	
-	GetWorld()->SpawnActor<AActor>(Target, Location, FRotator::ZeroRotator);
+	GetWorld()->SpawnActor<AActor>(Target, Location, Rotation);
 }
