@@ -22,8 +22,10 @@ private:
 	void Move(float DeltaTime);
 	void InitData();
 	void SetStartLocation();
-	float GetDist(const EAxis::Type& Axis, const FVector& Vec1, const FVector &Vec2);
-
+	float GetDistance(const EAxis::Type& Axis, const FVector& Vec1, const FVector &Vec2);
+	
+	float MoveDirection;
+	
 	UPROPERTY(EditAnywhere, Category = "Move")
 	float MoveSpeed;
 	

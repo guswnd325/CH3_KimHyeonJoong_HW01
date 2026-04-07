@@ -26,45 +26,39 @@ void AMovePlatform::Tick(float DeltaTime)
 	Move(DeltaTime);
 }
 
-float AMovePlatform::GetDist(const EAxis::Type& Axis, const FVector& Vec1, const FVector &Vec2)
+float AMovePlatform::GetDistance(const EAxis::Type& Axis, const FVector& Vec1, const FVector &Vec2)
 {
-	switch (Axis)
-	{
-	case EAxis::X:
-		return FMath::Abs(Vec1.X - Vec2.X);
-		break;
-	case EAxis::Y:
-		return FMath::Abs(Vec1.Y - Vec2.Y);
-		break;
-	case EAxis::Z:
-		return FMath::Abs(Vec1.Z - Vec2.Z);
-		break;
-	default:
-		break;
-	}
-
-	return 0;
+	return FMath::Abs(Vec1.GetComponentForAxis(Axis) - Vec2.GetComponentForAxis(Axis));
 }
 
 void AMovePlatform::Move(float DeltaTime)
 {
 	FVector MoveVector = FVector::ZeroVector;
-	MoveVector.SetComponentForAxis(MoveAxis, MoveSpeed);
+	MoveVector.SetComponentForAxis(MoveAxis, MoveSpeed * MoveDirection);
 
 	AddActorLocalOffset(MoveVector * DeltaTime);
 
-	float Dist = GetDist(MoveAxis, GetActorLocation(), StartLocation);
+	
+	float Distance = GetDistance(MoveAxis, GetActorLocation(), StartLocation);
+	UE_LOG(LogTemp, Warning, TEXT("Distance: %f"), Distance);
 
-	UE_LOG(LogTemp, Warning, TEXT("Dist = %f"), Dist);
-
-	if (MoveSpeed > 0 && Dist >= MaxRange)
+	if (MoveDirection > 0 && Distance >= MaxRange)
 	{
-		MoveSpeed = -MoveSpeed;
+		FVector CorrectedLocation = GetActorLocation();
+		CorrectedLocation.SetComponentForAxis(MoveAxis, StartLocation.GetComponentForAxis(MoveAxis) + MaxRange);
+		SetActorLocation(CorrectedLocation);
+		
+		// to -
+		MoveDirection = -MoveDirection;
 	}
-
-	else if (MoveSpeed < 0 && Dist <= 1)
+	else if (MoveDirection < 0 && (Distance <= 1.0f || GetActorLocation().GetComponentForAxis(MoveAxis) < StartLocation.GetComponentForAxis(MoveAxis)))
 	{
-		MoveSpeed = -MoveSpeed;
+		FVector CorrectedLocation = GetActorLocation();
+		CorrectedLocation.SetComponentForAxis(MoveAxis, StartLocation.GetComponentForAxis(MoveAxis));
+		SetActorLocation(CorrectedLocation);
+		
+		// to +
+		MoveDirection = -MoveDirection;
 	}
 }
 
@@ -72,6 +66,7 @@ void AMovePlatform::InitData()
 {
 	MoveSpeed = FMath::RandRange(MOVE_SPEED_MIN, MOVE_SPEED_MAX);
 	MaxRange = FMath::RandRange(MOVE_RANGE_MIN, MOVE_RANGE_MAX);
+	MoveDirection = 1;
 	int RandomAxis = FMath::RandRange((int)EAxis::Type::X, (int)EAxis::Type::Z);
 	MoveAxis = static_cast<EAxis::Type>(RandomAxis);
 }
